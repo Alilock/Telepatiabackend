@@ -72,7 +72,6 @@ const authController = {
 
     },
     register: async (req, res, next) => {
-        return res("salam")
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

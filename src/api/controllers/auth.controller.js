@@ -6,6 +6,7 @@ const { validationResult } = require("express-validator");
 
 const authController = {
     confirmEmail: async (req, res, next) => {
+
         try {
             const confirmCode = req.body.confirmCode;
             const email = req.body.email;
@@ -27,6 +28,7 @@ const authController = {
             // if (confirmDate - nowDate < 0) {
             //     throw new BaseError("Confirm code expired", 403);
             // }
+
             userDb.isConfirm = true;
 
             const token = tokenGenerate({
@@ -72,7 +74,6 @@ const authController = {
 
     },
     register: async (req, res, next) => {
-        res.json("salam");
         try {
             const errors = validationResult(req);
             if (!errors.isEmpty()) {

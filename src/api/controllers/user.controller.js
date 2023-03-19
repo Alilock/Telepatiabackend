@@ -38,6 +38,11 @@ const userController = {
             next(error);
         }
     },
+    updateProfilePic:async(req,res,next)=>{
+        const userId=req.params.userId;
+        
+
+    }
 };
 
 module.exports = userController;

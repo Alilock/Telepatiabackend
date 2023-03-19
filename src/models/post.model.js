@@ -4,7 +4,7 @@ const postSchema = new mongoose.Schema({
 
     content: {
         type: String,
-        required: true
+        required: false
     },
     author: {
         type: mongoose.Schema.Types.ObjectId,
@@ -30,7 +30,7 @@ const postSchema = new mongoose.Schema({
     photos: [
         {
             type: String,
-            required: true
+            required: false
         }
     ]
 });

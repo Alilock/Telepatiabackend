@@ -38,10 +38,7 @@ const authController = {
             userDb.save();
             res.json({
                 token: token,
-                user: {
-                    email: userDb.email,
-                    username: userDb.username
-                }
+                user: userDb
             });
         } catch (error) {
             next(error);

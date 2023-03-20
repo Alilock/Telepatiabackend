@@ -2,6 +2,7 @@ const express = require('express');
 const app = express();
 const postRouter = require("./src/api/routers/post.router")
 const authRouter = require("./src/api/routers/auth.router")
+const userRouter = require("./src/api/routers/user.router")
 const path = require('path')
 const fileUpload = require('express-fileupload')
 
@@ -23,7 +24,7 @@ app.get('/', (req, res) => {
 })
 app.use('/api/posts', postRouter)
 app.use('/api/auth', authRouter)
-
+app.use('/api/users', userRouter)
 
 app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json({

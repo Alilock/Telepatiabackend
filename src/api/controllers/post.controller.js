@@ -1,25 +1,26 @@
-const { post } = require('../../models/index');
+const { post, user } = require('../../models/index');
 const { fileSave } = require('../../services/fileService')
 const postController = {
 
-    publish: (req, res, next) => {
+    publish: async (req, res, next) => {
         try {
             const content = req.body.content;
             const photos = req.files;
             const userId = req.body.userId
             let images = []
-            console.log(photos);
             if (photos) {
                 images = fileSave(photos.photos)
             }
+
             const newpost = new post({
                 author: userId,
                 content: content,
                 photos: images,
             })
-            newpost.save();
+            await newpost.save();
+            const returnpost = await newpost.populate('author')
             res.json({
-                data: newpost,
+                data: returnpost,
                 statusCode: 201
             })
         } catch (error) {
@@ -38,7 +39,6 @@ const postController = {
         }
     },
     getAllByUser: async (req, res, next) => {
-        console.log('sa');
         try {
             const { userId } = req.query;
             const query = userId ? { author: userId } : {};

@@ -1,4 +1,4 @@
-const { post, user } = require('../../models/index');
+const { post, user, comment } = require('../../models/index');
 const { fileSave } = require('../../services/fileService')
 const postController = {
 
@@ -38,16 +38,78 @@ const postController = {
             next(error);
         }
     },
+    getById: async (req, res, next) => {
+        try {
+            const postId = req.query.postId
+            const postDb = await post.findById(postId).populate('author').populate('comments')
+            console.log('s');
+            res.json(postDb)
+
+        } catch (error) {
+            next(error)
+        }
+
+    },
     getAllByUser: async (req, res, next) => {
         try {
             const { userId } = req.query;
             const query = userId ? { author: userId } : {};
-            const posts = await post.find(query).populate('author');
+            const posts = await post.find(query).populate('author').sort({ createdAt: -1 });
+
             res.json(posts);
         } catch (error) {
             next(error);
         }
+    },
+    likePost: async (req, res, next) => {
+        try {
+            const { postId, userId } = req.body;
+            const postDb = await post.findById(postId);
+
+            // check if the user has already liked the post
+            const isLiked = postDb.likes.some((like) => like.equals(userId));
+
+            if (isLiked) {
+                // if user already liked the post, unlike the post
+                postDb.likes = postDb.likes.filter((like) => !like.equals(userId));
+            } else {
+                // if user has not liked the post, like the post
+                postDb.likes.push(userId);
+            }
+
+            // save the updated post
+            const updatedPost = await postDb.save();
+
+            res.json({
+                data: updatedPost,
+                statusCode: 200,
+            });
+        } catch (error) {
+            next(error);
+        }
+    },
+    postComment: async (req, res, next) => {
+        try {
+            const { postId, userId, content } = req.body;
+            const postDb = await post.findById(postId);
+
+            const newComment = new comment({
+                author: userId,
+                post: postId,
+                content: content
+            })
+            await newComment.save()
+            await postDb.comments.push(newComment);
+            await postDb.save()
+            res.json(newComment)
+        } catch (error) {
+            next(error);
+
+        }
+
     }
+
+
 }
 
 module.exports = postController; 

@@ -41,8 +41,15 @@ const postController = {
     getById: async (req, res, next) => {
         try {
             const postId = req.query.postId
-            const postDb = await post.findById(postId).populate('author').populate('comments')
-            console.log('s');
+            const postDb = await post.findById(postId)
+                .populate('author')
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'author',
+                        model: 'User'
+                    }
+                });
             res.json(postDb)
 
         } catch (error) {
@@ -91,8 +98,14 @@ const postController = {
     postComment: async (req, res, next) => {
         try {
             const { postId, userId, content } = req.body;
-            const postDb = await post.findById(postId);
-
+            const postDb = await post.findById(postId).populate('author')
+                .populate({
+                    path: 'comments',
+                    populate: {
+                        path: 'author',
+                        model: 'User'
+                    }
+                });;
             const newComment = new comment({
                 author: userId,
                 post: postId,
@@ -101,7 +114,7 @@ const postController = {
             await newComment.save()
             await postDb.comments.push(newComment);
             await postDb.save()
-            res.json(newComment)
+            res.json(postDb)
         } catch (error) {
             next(error);
 

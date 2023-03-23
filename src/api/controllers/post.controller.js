@@ -7,6 +7,7 @@ const postController = {
             const content = req.body.content;
             const photos = req.files;
             const userId = req.body.userId
+            const userDb = await user.findById(userId)
             let images = []
             if (photos) {
                 images = fileSave(photos.photos)
@@ -18,6 +19,8 @@ const postController = {
                 photos: images,
             })
             await newpost.save();
+            await userDb.posts.push(newpost)
+            await userDb.save()
             const returnpost = await newpost.populate('author')
             res.json({
                 data: returnpost,
@@ -29,7 +32,7 @@ const postController = {
     },
     getAll: async (req, res, next) => {
         try {
-            const posts = await post.find();
+            const posts = await post.find().populate('author').sort({ createdAt: -1 });;
             res.json({
                 data: posts,
                 statusCode: 200
@@ -70,6 +73,7 @@ const postController = {
     },
     likePost: async (req, res, next) => {
         try {
+
             const { postId, userId } = req.body;
             const postDb = await post.findById(postId);
 
@@ -119,7 +123,8 @@ const postController = {
         } catch (error) {
             next(error);
         }
-    }
+    },
+
 }
 
 module.exports = postController; 

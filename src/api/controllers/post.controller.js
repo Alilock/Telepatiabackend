@@ -98,6 +98,7 @@ const postController = {
     postComment: async (req, res, next) => {
         try {
             const { postId, userId, content } = req.body;
+            const userDb = await user.findById(userId)
             const postDb = await post.findById(postId).populate('author')
                 .populate({
                     path: 'comments',
@@ -107,7 +108,7 @@ const postController = {
                     }
                 });;
             const newComment = new comment({
-                author: userId,
+                author: userDb,
                 post: postId,
                 content: content
             })
@@ -117,12 +118,8 @@ const postController = {
             res.json(postDb)
         } catch (error) {
             next(error);
-
         }
-
     }
-
-
 }
 
 module.exports = postController; 

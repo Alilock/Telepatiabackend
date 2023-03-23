@@ -48,12 +48,13 @@ const userController = {
 
             // save the new profile picture to the server
             const newProfilePic = req.files.profilePic;
+            console.log(newProfilePic);
             let paths = []
             if (newProfilePic) {
 
                 paths = fileSave(newProfilePic);
             }
-
+            console.log('geldi');
             // update the user's profile picture field
             userDb.profilePicture = paths[0];
             await userDb.save();

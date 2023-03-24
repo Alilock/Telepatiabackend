@@ -4,10 +4,16 @@ const postRouter = require("./src/api/routers/post.router")
 const authRouter = require("./src/api/routers/auth.router")
 const userRouter = require("./src/api/routers/user.router")
 const path = require('path')
+const { firebaseConfig } = require("./src/config/firebaseconfig")
+const firebase = require('firebase/app')
 const fileUpload = require('express-fileupload')
 
 const cors = require('cors')
 app.use(fileUpload());
+
+
+firebase.initializeApp(firebaseConfig)
+
 
 app.use(cors({
     origin: '*'

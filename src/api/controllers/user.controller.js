@@ -1,5 +1,6 @@
 const BaseError = require("../../common/BaseError");
 const { user } = require("../../models");
+const { getStorage, uploadBytes, ref, getDownloadURL } = require('firebase/storage')
 const { fileSave } = require('../../services/fileService')
 var ObjectId = require('mongodb').ObjectId;
 
@@ -38,6 +39,8 @@ const userController = {
     },
     updateProfilePic: async (req, res, next) => {
         try {
+            const storage = getStorage()
+
             const userId = req.body.userId;
 
             const userDb = await user.findById(userId);
@@ -45,15 +48,14 @@ const userController = {
                 throw new BaseError("User not found", 404);
             }
 
-            // save the new profile picture to the server
             const newProfilePic = req.files.profilePic;
-            let paths = []
-            if (newProfilePic) {
+            const storageRef = ref(storage, newProfilePic.name)
+            const snapshot = await uploadBytes(storageRef, newProfilePic.data);
 
-                paths = fileSave(newProfilePic);
-            }
-            // update the user's profile picture field
-            userDb.profilePicture = paths[0];
+
+            const downloadURL = await getDownloadURL(storageRef);
+
+            userDb.profilePicture = downloadURL;
             await userDb.save();
 
             res.json({

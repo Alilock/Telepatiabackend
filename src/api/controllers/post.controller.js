@@ -1,22 +1,26 @@
 const { post, user, comment } = require('../../models/index');
 const { fileSave } = require('../../services/fileService')
+const { getStorage, uploadBytes, ref, getDownloadURL } = require('firebase/storage')
+
 const postController = {
 
     publish: async (req, res, next) => {
+        const storage = getStorage()
+
         try {
             const content = req.body.content;
-            const photos = req.files;
+            const photos = req.files.photos;
             const userId = req.body.userId
             const userDb = await user.findById(userId)
             let images = []
-            if (photos) {
-                images = fileSave(photos.photos)
-            }
+            const storageRef = ref(storage, photos.name)
+            const snapshot = await uploadBytes(storageRef, photos.data);
+            const downloadURL = await getDownloadURL(storageRef);
 
             const newpost = new post({
                 author: userId,
                 content: content,
-                photos: images,
+                photos: downloadURL,
             })
             await newpost.save();
             await userDb.posts.push(newpost)

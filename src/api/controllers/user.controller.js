@@ -69,12 +69,7 @@ const userController = {
     getForeignUser: async (req, res, next) => {
         try {
             const userId = req.params.userId;
-            const userDb = await user.findById(userId).populate('posts').exec((err, user) => {
-                if (err) {
-                    console.error(err);
-                    return;
-                }
-            })
+            const userDb = await user.findById(userId)
 
 
             if (!userDb) {
@@ -109,7 +104,7 @@ const userController = {
                 targetUser.followers.pull(requestingUser._id);
                 await targetUser.save();
 
-                res.json({ message: `You unfollowed ${targetUser.username}`, user: targetUser, foreignUser: requestingUser });
+                res.json({ message: `You unfollowed ${targetUser.username}`, user: requestingUser, foreignUser: targetUser });
             } else {
                 // add target user to requesting user's following array
                 requestingUser.following.push(targetUser._id);
@@ -125,7 +120,24 @@ const userController = {
             next(error);
         }
     },
+    searchUsers: async (req, res, next) => {
+        try {
 
+            const query = req.query.q
+            console.log(query);
+
+            const users = await user.find({
+                $or: [
+                    { username: { $regex: query, $options: 'i' } },
+                    { email: { $regex: query, $options: 'i' } }
+                ]
+            });
+
+            res.json(users);
+        } catch (error) {
+            next(error);
+        }
+    },
 
 
 };

@@ -6,7 +6,7 @@ const postController = {
 
     publish: async (req, res, next) => {
         const storage = getStorage()
-
+        console.log('sa');
         try {
             const content = req.body.content;
             const photos = req.files.photos;

@@ -50,10 +50,27 @@ const userController = {
 
             const newProfilePic = req.files.profilePic;
             const storageRef = ref(storage, newProfilePic.name)
-            const snapshot = await uploadBytes(storageRef, newProfilePic.data);
+            const resizedImage = await sharp(newProfilePic.data)
+                .resize(800) // Set the maximum width or height to 800 pixels
+                .jpeg({ quality: 80 }) // Convert the image to JPEG format with 80% quality
+                .toBuffer();
 
+            // Compress the image to a maximum file size of 1MB
+            let compressedImage = resizedImage;
+            let compressedSize = compressedImage.length;
+            while (compressedSize > 1000000) {
+                compressedImage = await sharp(compressedImage)
+                    .jpeg({ quality: 70 }) // Reduce the quality by 10%
+                    .toBuffer();
+                compressedSize = compressedImage.length;
+            }
 
-            const downloadURL = await getDownloadURL(storageRef);
+            // Upload the compressed image to Firebase Storage
+            const compressedStorageRef = ref(storage, `compressed_${newProfilePic.name}`);
+            const compressedSnapshot = await uploadBytes(compressedStorageRef, compressedImage);
+
+            const downloadURL = await getDownloadURL(compressedStorageRef);
+
 
             userDb.profilePicture = downloadURL;
             await userDb.save();

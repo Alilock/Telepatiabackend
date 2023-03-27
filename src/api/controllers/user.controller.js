@@ -124,7 +124,6 @@ const userController = {
         try {
 
             const query = req.query.q
-            console.log(query);
 
             const users = await user.find({
                 $or: [

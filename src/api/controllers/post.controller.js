@@ -6,16 +6,21 @@ const postController = {
 
     publish: async (req, res, next) => {
         const storage = getStorage()
-        console.log('sa');
         try {
             const content = req.body.content;
-            const photos = req.files.photos;
+
+            const photos = req.files?.photos;
+
             const userId = req.body.userId
             const userDb = await user.findById(userId)
-            let images = []
-            const storageRef = ref(storage, photos.name)
-            const snapshot = await uploadBytes(storageRef, photos.data);
-            const downloadURL = await getDownloadURL(storageRef);
+            const downloadURL = []
+
+            if (photos) {
+
+                const storageRef = ref(storage, photos.name)
+                const snapshot = await uploadBytes(storageRef, photos.data);
+                downloadURL = await getDownloadURL(storageRef);
+            }
 
             const newpost = new post({
                 author: userId,

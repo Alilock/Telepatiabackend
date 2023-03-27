@@ -3,7 +3,7 @@ const { user } = require("../../models");
 const { getStorage, uploadBytes, ref, getDownloadURL } = require('firebase/storage')
 const { fileSave } = require('../../services/fileService')
 var ObjectId = require('mongodb').ObjectId;
-
+const sharp = require('sharp');
 const userController = {
     // GET /api/users/:userId
     getUserById: async (req, res, next) => {
@@ -66,7 +66,7 @@ const userController = {
             }
 
             // Upload the compressed image to Firebase Storage
-            const compressedStorageRef = ref(storage, `compressed_${newProfilePic.name}`);
+            const compressedStorageRef = ref(storage, newProfilePic.name);
             const compressedSnapshot = await uploadBytes(compressedStorageRef, compressedImage);
 
             const downloadURL = await getDownloadURL(compressedStorageRef);

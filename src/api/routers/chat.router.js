@@ -1,15 +1,7 @@
 const express = require('express');
 const router = express.Router();
-const Chat = require('../../models/chat.model');
+const chatController = require('../controllers/chat.controller');
 
-router.get('/:senderId/:receiverId', async (req, res, next) => {
-    try {
-        const { senderId, receiverId } = req.params;
-        const chat = await Chat.findOne({ users: { $all: [senderId, receiverId] } }).populate('messages.sender messages.receiver', 'username profilePicture');
-        res.json(chat);
-    } catch (error) {
-        next(error)
-    }
-});
-
+router.get('/getall/:userId', chatController.getChatId)
+router.get('/:senderId/:receiverId', chatController.get)
 module.exports = router;

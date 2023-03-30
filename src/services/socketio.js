@@ -24,7 +24,7 @@ module.exports = (io) => {
                     { users: { $all: [senderId, receiverId] } },
                     { $push: { messages: { sender: senderId, receiver: receiverId, content } } },
                     { new: true }
-                ).populate('messages.sender messages.receiver', 'username');
+                ).populate('messages.sender messages.receiver', 'username profilePicture');
             }
 
             io.to(receiverId).emit('message', chat);

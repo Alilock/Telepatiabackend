@@ -98,6 +98,7 @@ const postController = {
                 postDb.likes.push(userId);
                 const existingNotification = await notification.findOne({
                     user: postDb.author,
+                    userBy: userId,
                     type: 'like',
                     post: postDb._id,
                 });
@@ -109,6 +110,7 @@ const postController = {
                     // if a like notification does not exist, create a new notification object and save it to the database
                     const notificationDb = new notification({
                         user: postDb.author,
+                        userBy: userId,
                         type: 'like',
                         post: postDb._id,
                         date: new Date(),
@@ -131,7 +133,7 @@ const postController = {
     },
     postComment: async (req, res, next) => {
         //write notification logic in this postComment?
-        
+
         try {
             const { postId, userId, content } = req.body;
             const userDb = await user.findById(userId)

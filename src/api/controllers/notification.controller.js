@@ -6,10 +6,10 @@ const notificationController = {
             const { userId } = req.params;
             // find all notifications for the user
             const notifications = await notification.find({ user: userId })
-                .populate('user', 'username')
+                .populate('userBy', 'username')
                 .populate('post', 'title')
                 .sort({ date: -1 });
-
+            console.log(notifications);
             res.json({
                 data: notifications,
                 statusCode: 200,

@@ -4,6 +4,7 @@ const postRouter = require("./src/api/routers/post.router")
 const authRouter = require("./src/api/routers/auth.router")
 const userRouter = require("./src/api/routers/user.router")
 const chatRouter = require('./src/api/routers/chat.router')
+const notificationRouter = require('./src/api/routers/notification.router')
 const path = require('path')
 const http = require('http').createServer(app);
 const io = require('socket.io')(http);
@@ -37,6 +38,7 @@ app.get('/', (req, res) => {
 app.use('/api/chat', chatRouter)
 app.use('/api/posts', postRouter)
 app.use('/api/auth', authRouter)
+app.use('/api/notifications', notificationRouter)
 app.use('/api/users', userRouter)
 app.use((err, req, res, next) => {
     res.status(err.statusCode || 500).json({

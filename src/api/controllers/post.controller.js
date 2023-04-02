@@ -1,4 +1,4 @@
-const { post, user, comment } = require('../../models/index');
+const { post, user, comment, notification } = require('../../models/index');
 const { fileSave } = require('../../services/fileService')
 const { getStorage, uploadBytes, ref, getDownloadURL } = require('firebase/storage')
 
@@ -92,9 +92,30 @@ const postController = {
             if (isLiked) {
                 // if user already liked the post, unlike the post
                 postDb.likes = postDb.likes.filter((like) => !like.equals(userId));
+
             } else {
                 // if user has not liked the post, like the post
                 postDb.likes.push(userId);
+                const existingNotification = await notification.findOne({
+                    user: postDb.author,
+                    type: 'like',
+                    post: postDb._id,
+                });
+                if (existingNotification) {
+                    // if a like notification already exists, update the existing notification
+                    existingNotification.date = new Date();
+                    await existingNotification.save();
+                } else {
+                    // if a like notification does not exist, create a new notification object and save it to the database
+                    const notificationDb = new notification({
+                        user: postDb.author,
+                        type: 'like',
+                        post: postDb._id,
+                        date: new Date(),
+                    });
+                    await notificationDb.save();
+                }
+                // io.emit('newNotification', notification);
             }
 
             // save the updated post
@@ -109,6 +130,8 @@ const postController = {
         }
     },
     postComment: async (req, res, next) => {
+        //write notification logic in this postComment?
+        
         try {
             const { postId, userId, content } = req.body;
             const userDb = await user.findById(userId)

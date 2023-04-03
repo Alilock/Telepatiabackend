@@ -27,12 +27,12 @@ const postSchema = new mongoose.Schema({
             ref: 'Comment'
         }
     ],
-    photos: [
-        {
-            type: String,
-            required: false
-        }
-    ]
+    photos:
+    {
+        type: String,
+        required: false
+    }
+
 });
 const Post = mongoose.model('Post', postSchema);
 

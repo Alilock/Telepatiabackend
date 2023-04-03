@@ -17,11 +17,11 @@ const postController = {
             let downloadURL = ''
             if (photos) {
 
-                const resizedImage = await sharp(photos.data)
-                    .resize(800) // Set the maximum width or height to 800 pixels
-                    .jpeg({ quality: 80 }) // Convert the image to JPEG format with 80% quality
-                    .toBuffer();
-                let compressedImage = resizedImage;
+                // const resizedImage = await sharp(photos.data)
+                //     .resize(800) // Set the maximum width or height to 800 pixels
+                //     .jpeg({ quality: 80 }) // Convert the image to JPEG format with 80% quality
+                //     .toBuffer();
+                let compressedImage = photos.data;
                 let compressedSize = compressedImage.length;
                 while (compressedSize > 1000000) {
                     compressedImage = await sharp(compressedImage)

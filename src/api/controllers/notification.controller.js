@@ -9,7 +9,6 @@ const notificationController = {
                 .populate('userBy', 'username')
                 .populate('post', 'title')
                 .sort({ date: -1 });
-            console.log(notifications);
             res.json({
                 data: notifications,
                 statusCode: 200,

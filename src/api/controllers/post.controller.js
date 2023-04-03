@@ -102,21 +102,16 @@ const postController = {
                     type: 'like',
                     post: postDb._id,
                 });
-                if (existingNotification) {
-                    // if a like notification already exists, update the existing notification
-                    existingNotification.date = new Date();
-                    await existingNotification.save();
-                } else {
-                    // if a like notification does not exist, create a new notification object and save it to the database
-                    const notificationDb = new notification({
-                        user: postDb.author,
-                        userBy: userId,
-                        type: 'like',
-                        post: postDb._id,
-                        date: new Date(),
-                    });
-                    await notificationDb.save();
-                }
+
+                // if a like notification does not exist, create a new notification object and save it to the database
+                const notificationDb = new notification({
+                    user: postDb.author,
+                    userBy: userId,
+                    type: 'like',
+                    post: postDb._id,
+                    date: new Date(),
+                });
+                await notificationDb.save();
                 // io.emit('newNotification', notification);
             }
 
@@ -150,6 +145,17 @@ const postController = {
                 post: postId,
                 content: content
             })
+            console.log('geldi');
+
+            // if a like notification does not exist, create a new notification object and save it to the database
+            const notificationDb = new notification({
+                user: postDb.author,
+                userBy: userId,
+                type: 'comment',
+                post: postDb._id,
+                date: new Date(),
+            });
+            await notificationDb.save();
             await newComment.save()
             await postDb.comments.push(newComment);
             await postDb.save()

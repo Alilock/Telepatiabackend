@@ -51,7 +51,7 @@ const userController = {
             const newProfilePic = req.files.profilePic;
             const storageRef = ref(storage, newProfilePic.name)
             const resizedImage = await sharp(newProfilePic.data)
-                .resize(800) // Set the maximum width or height to 800 pixels
+                .resize(800).rotate() // Set the maximum width or height to 800 pixels
                 .jpeg({ quality: 80 }) // Convert the image to JPEG format with 80% quality
                 .toBuffer();
 

@@ -24,7 +24,7 @@ const postController = {
                 let compressedImage = photos.data;
                 let compressedSize = compressedImage.length;
                 while (compressedSize > 1000000) {
-                    compressedImage = await sharp(compressedImage)
+                    compressedImage = await sharp(compressedImage).rotate()
                         .jpeg({ quality: 70 }) // Reduce the quality by 10%
                         .toBuffer();
                     compressedSize = compressedImage.length;

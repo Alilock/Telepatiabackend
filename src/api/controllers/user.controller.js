@@ -17,8 +17,22 @@ const userController = {
         } catch (error) {
             next(error);
         }
-    }
-    ,
+    },
+    editBio: async (req, res, next) => {
+        try {
+            const { bio, userId } = req.body;
+
+            const updatedUser = await user.findByIdAndUpdate(
+                userId,
+                { bio },
+                { new: true }
+            );
+
+            res.json(updatedUser);
+        } catch (error) {
+            next(error);
+        }
+    },
     getUserByUsername: async (req, res, next) => {
         try {
             const username = req.params.username;

@@ -11,9 +11,10 @@ const postController = {
             const content = req.body.content;
             console.log('geldi');
             const photos = req.files?.photos;
-
+            const photourl = req.body.photourl
             const userId = req.body.userId
             const userDb = await user.findById(userId)
+
             let downloadURL = ''
             if (photos) {
 
@@ -31,11 +32,12 @@ const postController = {
                 }
 
                 const storageRef = ref(storage, photos.name)
-
-
                 const snapshot = await uploadBytes(storageRef, compressedImage);
                 downloadURL = await getDownloadURL(storageRef);
 
+            }
+            if (photourl) {
+                downloadURL = photourl
             }
             const newpost = new post({
                 author: userId,
